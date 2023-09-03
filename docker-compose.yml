@@ -1,0 +1,36 @@
+version: "3.9"
+name: health-checks-ui
+
+volumes:
+  redis-cache-volume:
+    driver: local
+
+services:
+
+  postgres:
+    image: "postgres:13-alpine"
+    hostname: postgres
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: pass
+
+  redis-cache:
+    image: redis:latest
+    hostname: redis-cache
+    restart: always
+    container_name: redis-cache
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-cache-volume:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    container_name: rabbitmq
+    ports:
+      - 5672:5672 # rabbit itself
+      - 15672:15672 # management ui
